@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { Lesson } from "../types";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, Play } from "lucide-react";
 
 interface LessonDesignerProps {
   customLessons: Lesson[];
   onSaveLesson: (lesson: Lesson) => void;
   onDeleteLesson: (id: string) => void;
+  onTestLesson?: (id: string) => void;
 }
 
 export function LessonDesigner({
   customLessons,
   onSaveLesson,
   onDeleteLesson,
+  onTestLesson,
 }: LessonDesignerProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [title, setTitle] = useState("");
@@ -169,13 +171,25 @@ export function LessonDesigner({
                     {lesson.text}
                   </p>
                 </div>
-                <button
-                  onClick={() => onDeleteLesson(lesson.id)}
-                  className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors self-end sm:self-start"
-                  title="Delete Lesson"
-                >
-                  <Trash2 size={20} />
-                </button>
+                <div className="flex items-center gap-2 self-end sm:self-start">
+                  {onTestLesson && (
+                    <button
+                      onClick={() => onTestLesson(lesson.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                      title="Practice this lesson"
+                    >
+                      <Play size={15} />
+                      Practice
+                    </button>
+                  )}
+                  <button
+                    onClick={() => onDeleteLesson(lesson.id)}
+                    className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                    title="Delete Lesson"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

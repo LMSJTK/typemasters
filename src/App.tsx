@@ -21,6 +21,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState<ViewState>("dashboard");
   const [stats, setStats] = useState<TypingStats[]>([]);
   const [customLessons, setCustomLessons] = useState<Lesson[]>([]);
+  const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Load data from localStorage on mount
@@ -70,12 +71,27 @@ export default function App() {
     setCustomLessons((prev) => prev.filter((l) => l.id !== id));
   };
 
+  const handleTestLesson = (lessonId: string) => {
+    setSelectedLessonId(lessonId);
+    setCurrentView("lessons");
+  };
+
   const renderView = () => {
     switch (currentView) {
       case "dashboard":
         return <Dashboard onChangeView={setCurrentView} stats={stats} />;
       case "lessons":
-        return <Lessons onSaveStats={handleSaveStats} />;
+        return (
+          <Lessons
+            customLessons={customLessons}
+            initialLessonId={selectedLessonId}
+            onSaveStats={handleSaveStats}
+            onNavigateToDesigner={() => {
+              setSelectedLessonId(null);
+              setCurrentView("designer");
+            }}
+          />
+        );
       case "practice":
         return <Practice onSaveStats={handleSaveStats} />;
       case "games":
@@ -88,6 +104,7 @@ export default function App() {
             customLessons={customLessons}
             onSaveLesson={handleSaveLesson}
             onDeleteLesson={handleDeleteLesson}
+            onTestLesson={handleTestLesson}
           />
         );
       default:
@@ -108,6 +125,7 @@ export default function App() {
     return (
       <button
         onClick={() => {
+          setSelectedLessonId(null);
           setCurrentView(view);
           setIsMobileMenuOpen(false);
         }}
